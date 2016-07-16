@@ -17,7 +17,7 @@ class ScriptParser
   attr_reader :root, :html
   def initialize(html_string)
     @html = html_string
-    @root = Tag.new('page', nil, nil, nil, '', nil, [], 0)
+    @root = Tag.new('doc', nil, nil, nil, '', nil, [], 0)
     parse_script
     # strip_insides
   end
@@ -34,25 +34,18 @@ class ScriptParser
   end
 
   def parse_script
-    # begin
-    #loop through every character in html string
-    # if < , create a child tag, connect it to current tag, set current tag to child tag 
-    # fill the current tag tag object's data before >
-    # any text found here is added to "inside" data of current tag
-      # if </ set current tag to current tag's parent
-      # end until current tag. parent is nil
 
-
-# "<div>  div text before  <p>    p text  </p>  <div>    more div text  </div>  div text after</div>"
   
     current_tag = @root
     inside_opening_tag = true
     inside_closing_tag = false
     
     @html.each_char.with_index do |char, i|
-      puts current_tag.type
-      puts i
+  
       if char == "<" && @html[i+1] != '/'
+        current_tag.children << current_tag.inside.strip
+        current_tag.inside = ""
+
         child_tag = parse_tag(@html[i..-1])
         current_tag.children << child_tag
 
@@ -80,19 +73,24 @@ class ScriptParser
     @root
   end
 
-  def strip_insides(child)
+  # def strip_insides
 
-    @root.children.each do |child|
-      return if child.children == []
-      child.inside.strip
-      strip_insides(child)
-    end
-  end
+  #   @root.children.each do |child|
+  #     return if child.children == []
+  #     child.inside.strip
+  #     strip_insides(child)
+  #   end
+  # end
 
   # alternatively: get a regex that captures anything surrounded by opening & closing angle brackets
-  # split, and get everything in between
-  # two arrays - tags in order, contents in order
 
+  # split, and get everything in between using 
+  # two arrays - tags in order, contents in order
+  # use a stack
+
+
+  def render
+  end
 end
 
 # Finally, output the string again.
@@ -120,9 +118,20 @@ end
 #parent's inside is when parent is the only opened tag and there is text
 # 
 
-sp = ScriptParser.new(html_string).root
-puts ScriptParser.new(html_string).html[36..45]
-sp.children.each do |child|
-  p child.children
-end
 
+
+sp = ScriptParser.new(html_string).root
+p sp
+# puts ScriptParser.new(html_string).html[36..45]
+# sp.children.each do |child|
+#   p child.children
+# end
+
+# queue = [@doc]
+
+# def render
+# while item = queue.shift
+#   item.children.reverse_each { |type| queue.unshift(type) } if item.children != []
+#   p item.type
+# end
+# end
