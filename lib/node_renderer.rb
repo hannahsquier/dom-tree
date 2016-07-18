@@ -23,7 +23,6 @@ class NodeRenderer
       node.classes.each do |class1|
         puts "class: #{class1}"
       end
-
     end
     puts "-------------Subtags-------------"
     puts "Total: #{child_count} subtags"
@@ -31,8 +30,14 @@ class NodeRenderer
     type_counter.each do |type, count|
        puts "#{type}: #{count}"
     end
-
   end
+
+  def render_html
+    full_html = render_node(@tree, @html)
+    puts full_html
+  end
+
+  private
 
   def count_children_type(node=@tree, child_type_counter=Hash.new(0))
     return count if node.children.empty?
@@ -47,11 +52,6 @@ class NodeRenderer
   def children_count(node=@tree)
     child_type_counter = count_children_type(node)
     child_type_counter.values.inject(:+)
-  end
-
-
-  def render_html
-    full_html = render_node(@tree, @html)
   end
 
   def render_node(node, html)
@@ -99,4 +99,4 @@ tree = d.build_tree
 renderer = NodeRenderer.new(tree)
 grandchild = tree.children[0].children[1].children[0]
 
-renderer.render_stats(grandchild)
+renderer.render_html
