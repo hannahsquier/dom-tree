@@ -40,12 +40,11 @@ class TreeSearcher
   end
 
   def search_by_text(query, node=@tree, result=[])
-    return result if node.children.empty?
+    return result if  node.is_a?(String) || node.children.empty?
 
     node.children.each do |child|
-       next if child.is_a?(Tag)
-       p child
-       result << child if child == query
+
+       result << node if child == query
        result = search_by_text(query, child, result)
     end
     result
@@ -55,7 +54,6 @@ end
 
 d = DOMReader.new('./test.html')
 tree = d.build_tree
-
 ts = TreeSearcher.new(tree)
 
-puts ts.search_by(:text, 'One h1')
+p ts.search_by(:text, 'One h1')

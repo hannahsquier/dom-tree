@@ -2,8 +2,23 @@
 
 TAG = /<([^<>]+)>/
 CLOSE_TAG = /<\/([^<>]+)>/
+ATTRIBS = /(\w+=["|'][\w|\s|\d|:|.|\/]+["|'])+/
 
-Tag = Struct.new(:type, :classes, :id, :parent, :children, :depth)
+#attributes options hash
+#define method on struct
+class Tag < Struct.new(:type, :classes, :id, :parent, :children, :depth, :attributes)
+
+  def method_missing(name, *args)
+    arg = args.first
+    if name.to_s.chars.last == '='
+      name = name.to_s.gsub('=', '').to_sym
+      @attributes[name] = arg
+    else
+      @attributes[name]
+    end
+  end
+
+end
 
 class DOMReader
 
@@ -11,7 +26,7 @@ class DOMReader
 
   def initialize(file)
     @text = File.open(file) { |f| f.read }
-    @tree = Tag.new("doc", [], nil, nil, [], 0)
+    @tree = Tag.new("doc", [], nil, nil, [], 0, {})
   end
 
   def build_tree
@@ -61,14 +76,25 @@ class DOMReader
     classes = tag_text.match(/(class(| )=(| )('|"))(.+?)(("|'))/).to_a[5]
     classes = classes ? classes.split(' ') : []
     id = tag_text.match(/(id(| )=(| )('|"))(\w+?)(("|'))/).to_a[5]
-    tag = Tag.new(type, classes, id, nil, [], 0)
+    tag = Tag.new(type, classes, id, nil, [], 0, {})
+    add_other_attributes(tag, tag_text)
+  end
+
+  def add_other_attributes(tag, tag_text)
+    attrib_matches = tag_text.scan(ATTRIBS)
+
+
+    attrib_matches.each do |match|
+      match = match[0].gsub("'","").gsub("\"","").split('=')
+      tag.attributes[match[0]] = match[1]
+    end
+    tag
   end
 
 
 end
 
-d = DOMReader.new('./test.html')
-d. build_tree
-
-
+d = DOMReader.new('./small_html.txt')
+d.build_tree
+p d.tree
 
