@@ -2,23 +2,10 @@
 
 TAG = /<([^<>]+)>/
 CLOSE_TAG = /<\/([^<>]+)>/
-ATTRIBS = /(\w+=["|'][\w|\s|\d|:|.|\/]+["|'])+/
+ATTRIBS = /(\w+=["|'][\w|\s|\d|:|\-|.|\/]+["|'])/
 
-#attributes options hash
-#define method on struct
-class Tag < Struct.new(:type, :classes, :id, :parent, :children, :depth, :attributes)
+Tag = Struct.new(:type, :classes, :id, :parent, :children, :depth, :attributes)
 
-  def method_missing(name, *args)
-    arg = args.first
-    if name.to_s.chars.last == '='
-      name = name.to_s.gsub('=', '').to_sym
-      @attributes[name] = arg
-    else
-      @attributes[name]
-    end
-  end
-
-end
 
 class DOMReader
 
@@ -83,7 +70,6 @@ class DOMReader
   def add_other_attributes(tag, tag_text)
     attrib_matches = tag_text.scan(ATTRIBS)
 
-
     attrib_matches.each do |match|
       match = match[0].gsub("'","").gsub("\"","").split('=')
       tag.attributes[match[0]] = match[1]
@@ -96,5 +82,5 @@ end
 
 d = DOMReader.new('./small_html.txt')
 d.build_tree
-p d.tree
+#p d.tree
 

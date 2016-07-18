@@ -19,10 +19,8 @@ class DOMWriter
     depth = node.depth
     node.children.each do |child|
       if child.is_a?(Tag)
-        type = render_type(child)
-        classes = render_classes(child)
-        id = render_id(child)
-        html <<  ("  " * depth) << "<#{type}#{classes}#{id}>\n"
+        open_tag = "<#{render_type(child)}#{render_attribs(child)}>\n"
+        html <<  ("  " * depth) << open_tag
         render_node(child, html)
         html << "  " * depth  << "</#{child.type}>\n"
 
@@ -37,24 +35,20 @@ class DOMWriter
     tag.type ? tag.type : ""
   end
 
-  def render_id(tag)
-    tag.id ? " id=\"#{tag.id}\"" : ""
-  end
 
-  def render_classes(tag)
-    if tag.classes.empty?
+  def render_attribs(tag)
+    attrib_string = ""
+    if tag.classes == {}
       return ""
     else
-      classes = " class=\"#{tag.classes.shift}"
-      tag.classes.each do |tag_class|
-        classes << " #{tag_class}"
+      tag.attributes.each do |key, value|
+        attrib_string << " #{key}=\"#{value}\""
       end
-      classes << "\""
     end
+    attrib_string
   end
 end
 
-d = DOMReader.new('./test.html')
+d = DOMReader.new('./small_html.txt')
 tree = d.build_tree
-
 puts DOMWriter.new(tree).render_html
