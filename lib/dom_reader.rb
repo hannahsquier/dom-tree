@@ -4,7 +4,7 @@ TAG = /<([^<>]+)>/
 CLOSE_TAG = /<\/([^<>]+)>/
 ATTRIBS = /(\w+=["|'][\w|\s|\d|:|\-|.|\/]+["|'])/
 
-Tag = Struct.new(:type, :classes, :id, :parent, :children, :depth, :attributes)
+Tag = Struct.new(:type, :classes, :parent, :children, :depth, :attributes)
 
 
 class DOMReader
@@ -13,7 +13,7 @@ class DOMReader
 
   def initialize(file)
     @text = File.open(file) { |f| f.read }
-    @tree = Tag.new("doc", [], nil, nil, [], 0, {})
+    @tree = Tag.new("doc", [], nil, [], 0, {})
   end
 
   def build_tree
@@ -62,8 +62,7 @@ class DOMReader
     type = tag_text.match(/<\w+( |>)/).to_a[0][1..-2]
     classes = tag_text.match(/(class(| )=(| )('|"))(.+?)(("|'))/).to_a[5]
     classes = classes ? classes.split(' ') : []
-    id = tag_text.match(/(id(| )=(| )('|"))(\w+?)(("|'))/).to_a[5]
-    tag = Tag.new(type, classes, id, nil, [], 0, {})
+    tag = Tag.new(type, classes, nil, [], 0, {})
     add_other_attributes(tag, tag_text)
   end
 

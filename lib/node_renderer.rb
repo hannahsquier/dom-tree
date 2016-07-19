@@ -14,17 +14,15 @@ class NodeRenderer
     puts "Stats for #{node.type} (depth=#{node.depth})"
     puts "================================="
     puts "------------Attributes-----------"
-    if node.id.nil? && node.classes.empty? && node.attributes == {}
+    if node.classes.empty? && node.attributes == {}
       puts "None."
     else
-
-      node.attributes.each do |key, value|
-         puts "#{key}: #{value}"
+      node.attributes.each do |attrib_name, attrib_value|
+         puts "#{attrib_name}: #{attrib_value}"
       end
     end
     puts "-------------Subtags-------------"
     puts "Total: #{child_count} subtags"
-
     type_counter.each do |type, count|
        puts "#{type}: #{count}"
     end

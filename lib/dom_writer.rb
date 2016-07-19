@@ -6,29 +6,37 @@ class DOMWriter
     @tree = tree
   end
 
-
-  def render_html
-    full_html = render_node(@tree)
-    puts full_html
+  def write_to_file(path="./rendered_html.html")
+    File.write(path, render_node)
+    puts render_node
+    puts "Your file is located in #{path}"
   end
+
 
   private
 
-  def render_node(node, html="")
+  def render_node(node=@tree, html="")
     return if node.children == []
     depth = node.depth
     node.children.each do |child|
       if child.is_a?(Tag)
-        open_tag = "<#{render_type(child)}#{render_attribs(child)}>\n"
-        html <<  ("  " * depth) << open_tag
-        render_node(child, html)
-        html << "  " * depth  << "</#{child.type}>\n"
-
+        render_tag(html, child, depth)
       elsif
-        html << "  " * depth << child <<"\n"
+        render_text(html, child, depth)
       end
     end
     html
+  end
+
+  def render_tag(html="", child, depth)
+    open_tag = "<#{render_type(child)}#{render_attribs(child)}>\n"
+    html <<  ("  " * depth) << open_tag
+    render_node(child, html)
+    html << "  " * depth  << "</#{child.type}>\n"
+  end
+
+  def render_text(html="", child, depth)
+    html << "  " * depth << child <<"\n"
   end
 
   def render_type(tag)
@@ -49,6 +57,6 @@ class DOMWriter
   end
 end
 
-d = DOMReader.new('./small_html.txt')
+d = DOMReader.new('./test.html')
 tree = d.build_tree
-puts DOMWriter.new(tree).render_html
+puts DOMWriter.new(tree).write_to_file
