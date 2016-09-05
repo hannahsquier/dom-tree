@@ -1,9 +1,5 @@
-🌲 DOM Tree Parser
 
-This DOM Tree parser reads in HTML files and parses it into individual nodes.
-The tool
-
-# :memo: DOM Tree Parser Built with Ruby
+# 🌲 DOM Tree Parser Built with Ruby
 
 With this application, you can convert any HTML file into a node based DOM Tree. The program can also build the original file back from the tree.
 
