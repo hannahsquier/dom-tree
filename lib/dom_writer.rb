@@ -12,7 +12,6 @@ class DOMWriter
     puts "Your file is located in #{path}"
   end
 
-
   private
 
   def render_node(node=@tree, html="")
@@ -56,7 +55,3 @@ class DOMWriter
     attrib_string
   end
 end
-
-d = DOMReader.new('./test.html')
-tree = d.build_tree
-puts DOMWriter.new(tree).write_to_file
